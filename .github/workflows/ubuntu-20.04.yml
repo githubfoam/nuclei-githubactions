@@ -1,0 +1,50 @@
+name: "nuclei ubuntu CI workflow"
+
+
+on:
+  push:
+    branches: [ test ]
+  schedule:
+      - cron:  '0 0 1 * *' ##execution of a task in the first minute of the month 
+
+
+jobs:
+
+  nuclei-ubuntu-2004-job:
+    name: "nuclei docker ubuntu-22.04"
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: "os fingerprinting"
+      run: |
+        hostnamectl status
+        lsb_release -a
+        lsb_release -d
+        cat /etc/lsb-release
+        cat /etc/issue
+        cat /etc/os-release
+        sudo apt-get install -y neofetch && neofetch   
+
+    - name: "pull nuclei docker image"
+      run: |
+        cd /tmp
+        docker pull projectdiscovery/nuclei:latest  
+    
+    - name: "pull nuclei docker image"
+      run: |
+        cd /tmp
+        #Clone Nuclei Templates Repository
+        git clone https://github.com/projectdiscovery/nuclei-templates.git
+        #update the templates
+        docker run -v /tmp/nuclei-templates:/nuclei-templates projectdiscovery/nuclei -update-templates
+         
+    - name: "nuclei deprecated tls scan"
+      run: |
+        cd /tmp
+        docker run -v /tmp/nuclei-templates:/nuclei-templates projectdiscovery/nuclei \
+        -u https://example.com -t /nuclei-templates/ssl/deprecated-tls.yaml
+
+
+
+
