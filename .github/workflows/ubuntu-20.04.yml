@@ -1,4 +1,4 @@
-name: "nuclei ubuntu CI workflow"
+name: "nuclei ubuntu 20.04 CI workflow"
 
 
 on:
