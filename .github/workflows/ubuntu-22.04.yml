@@ -10,11 +10,12 @@ on:
 
 jobs:
 
-  ubuntu-fedora-latest-job:
+  ubuntu-nuclei-ubuntu-22.04-job:
     name: "nuclei docker ubuntu-22.04"
     runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v2
+    
     - name: "os fingerprinting"
       run: |
         hostnamectl status
@@ -24,6 +25,25 @@ jobs:
         cat /etc/issue
         cat /etc/os-release
         sudo apt-get install -y neofetch && neofetch   
+        
+    - name: "pull nuclei docker image"
+      run: |
+        cd /tmp
+        docker pull projectdiscovery/nuclei:latest  
+    
+    - name: "pull nuclei docker image"
+      run: |
+        cd /tmp
+        #Clone Nuclei Templates Repository
+        git clone https://github.com/projectdiscovery/nuclei-templates.git
+        #update the templates
+        docker run -v /tmp/nuclei-templates:/nuclei-templates projectdiscovery/nuclei -update-templates
+         
+    - name: "nuclei deprecated tls scan"
+      run: |
+        cd /tmp
+        docker run -v /tmp/nuclei-templates:/nuclei-templates projectdiscovery/nuclei \
+        -u https://example.com -t /nuclei-templates/ssl/deprecated-tls.yaml
 
 
 
