@@ -1,0 +1,30 @@
+name: "nuclei ubuntu CI workflow"
+
+
+on:
+  push:
+    branches: [ main ]
+  schedule:
+      - cron:  '0 0 1 * *' ##execution of a task in the first minute of the month 
+
+
+jobs:
+
+  ubuntu-fedora-latest-job:
+    name: "nuclei docker ubuntu-22.04"
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: "os fingerprinting"
+      run: |
+        hostnamectl status
+        lsb_release -a
+        lsb_release -d
+        cat /etc/lsb-release
+        cat /etc/issue
+        cat /etc/os-release
+        sudo apt-get install -y neofetch && neofetch   
+
+
+
+
